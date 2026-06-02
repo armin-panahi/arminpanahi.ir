@@ -10,7 +10,7 @@ This website showcases my professional background, technical skills, projects, a
 
 ## 🌐 Live Website
 
-[Coming Soon](https://arminpanahi.ir)
+[View](https://arminpanahi.ir)
 
 ## 🚀 Features
 
