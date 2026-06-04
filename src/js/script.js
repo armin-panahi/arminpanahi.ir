@@ -165,3 +165,227 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js")
     .then(() => console.log("Service Worker Registered"));
 }
+
+
+
+
+
+
+
+/* =========================
+   Animated Programming Background
+========================= */
+const canvas = document.getElementById("code-bg");
+const ctx = canvas.getContext("2d");
+
+let w = canvas.width = window.innerWidth;
+let h = canvas.height = window.innerHeight;
+
+const particleColor = "#ffdb70";
+
+const particles = [];
+const symbols = [];
+
+const symbolChars = [
+  "{}",
+  "</>",
+  "()",
+  "[]",
+  "=>",
+  "const",
+  "let",
+  "function"
+];
+
+class Particle{
+  constructor(){
+    this.reset();
+  }
+
+  reset(){
+    this.x = Math.random() * w;
+    this.y = Math.random() * h;
+
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+
+    this.radius = Math.random() * 2 + 1;
+  }
+
+  update(){
+
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if(this.x < 0 || this.x > w)
+      this.vx *= -1;
+
+    if(this.y < 0 || this.y > h)
+      this.vy *= -1;
+  }
+
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
+
+    ctx.fillStyle = "rgba(255,219,112,.8)";
+    ctx.fill();
+  }
+}
+
+class FloatingSymbol{
+
+  constructor(){
+    this.reset();
+  }
+
+  reset(){
+
+    this.text =
+      symbolChars[
+        Math.floor(
+          Math.random()*symbolChars.length
+        )
+      ];
+
+    this.x = Math.random()*w;
+    this.y = h + 50;
+
+    this.speed =
+      Math.random()*0.3 + 0.1;
+
+    this.opacity =
+      Math.random()*0.08 + 0.03;
+
+    this.size =
+      Math.random()*18 + 14;
+  }
+
+  update(){
+
+    this.y -= this.speed;
+
+    if(this.y < -100){
+      this.reset();
+      this.y = h + 50;
+    }
+  }
+
+  draw(){
+
+    ctx.font =
+      `${this.size}px monospace`;
+
+    ctx.fillStyle =
+      `rgba(255,219,112,${this.opacity})`;
+
+    ctx.fillText(
+      this.text,
+      this.x,
+      this.y
+    );
+  }
+}
+
+for(let i=0;i<120;i++){
+  particles.push(
+    new Particle()
+  );
+}
+
+for(let i=0;i<15;i++){
+  symbols.push(
+    new FloatingSymbol()
+  );
+}
+
+function drawConnections(){
+
+  for(let i=0;i<particles.length;i++){
+
+    for(let j=i+1;j<particles.length;j++){
+
+      const dx =
+        particles[i].x -
+        particles[j].x;
+
+      const dy =
+        particles[i].y -
+        particles[j].y;
+
+      const dist =
+        Math.sqrt(dx*dx+dy*dy);
+
+      if(dist < 140){
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+          particles[i].x,
+          particles[i].y
+        );
+
+        ctx.lineTo(
+          particles[j].x,
+          particles[j].y
+        );
+
+        ctx.strokeStyle =
+          `rgba(255,219,112,${
+            (140-dist)/140 * 0.08
+          })`;
+
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate(){
+
+  ctx.clearRect(0,0,w,h);
+
+  drawConnections();
+
+  particles.forEach(p=>{
+    p.update();
+    p.draw();
+  });
+
+  symbols.forEach(s=>{
+    s.update();
+    s.draw();
+  });
+
+  requestAnimationFrame(
+    animate
+  );
+}
+
+animate();
+
+window.addEventListener(
+  "resize",
+  ()=>{
+    w = canvas.width =
+      window.innerWidth;
+
+    h = canvas.height =
+      window.innerHeight;
+  }
+);
+
+const glow =
+document.getElementById("cursor-glow");
+
+document.addEventListener(
+"mousemove",
+e => {
+
+  glow.style.left =
+  e.clientX + "px";
+
+  glow.style.top =
+  e.clientY + "px";
+});
+
