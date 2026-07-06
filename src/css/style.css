@@ -335,7 +335,6 @@ main {
   background: var(--bg-gradient-onyx);
   border-radius: 20px;
   overflow: hidden;
-  height: 85px;
 }
 
 .avatar-box > img {
