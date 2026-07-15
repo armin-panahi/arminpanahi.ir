@@ -1444,6 +1444,8 @@ textarea.form-input::-webkit-resizer { display: none; }
   .testimonials-avatar-box {
     transform: translate(30px, -30px);
     border-radius: 20px;
+    overflow: hidden;
+    border: 3px solid var(--vegas-gold);
   }
 
   .testimonials-avatar-box img { width: 80px; }
@@ -1860,6 +1862,10 @@ textarea.form-input::-webkit-resizer { display: none; }
 
   .sidebar-info { flex-direction: column; }
 
+  .avatar-box {
+    border: 3px solid var(--vegas-gold);
+  }
+  
   .avatar-box img { width: 150px; }
 
   .info-content .name {
