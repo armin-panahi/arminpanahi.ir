@@ -116,10 +116,147 @@ for (let i = 0; i < filterBtn.length; i++) {
 
 
 // contact form variables
+// contact form variables
 const form = document.querySelector("[data-form]");
 const formInputs = document.querySelectorAll("[data-form-input]");
 const formBtn = document.querySelector("[data-form-btn]");
 
+// Formspree contact form configuration
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xppwallq";
+
+if (form && formBtn) {
+  form.action = FORMSPREE_ENDPOINT;
+  form.method = "POST";
+
+  // Status message
+  const formStatus = document.createElement("div");
+  formStatus.setAttribute("role", "status");
+  formStatus.setAttribute("aria-live", "polite");
+
+  formStatus.style.marginTop = "14px";
+  formStatus.style.fontSize = "14px";
+  formStatus.style.lineHeight = "1.8";
+  formStatus.style.textAlign = "center";
+  formStatus.style.minHeight = "24px";
+
+  form.appendChild(formStatus);
+
+  const setFormStatus = function (message, type = "") {
+    formStatus.textContent = message;
+    formStatus.dataset.status = type;
+
+    if (type === "success") {
+      formStatus.style.color = "hsl(45, 100%, 72%";
+    } else if (type === "error") {
+      formStatus.style.color = "#ff8d8d";
+    } else {
+      formStatus.style.color = "";
+    }
+  };
+
+  // Real Formspree submission
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    if (!form.checkValidity() || formBtn.disabled) {
+      form.reportValidity();
+      return;
+    }
+
+    formBtn.disabled = true;
+    formBtn.setAttribute("aria-busy", "true");
+
+    const buttonText = formBtn.querySelector("span");
+    const originalButtonText = buttonText
+      ? buttonText.textContent
+      : "ارسال پیام";
+
+    if (buttonText) {
+      buttonText.textContent = "در حال ارسال...";
+    }
+
+    setFormStatus("پیام در حال ارسال است...", "loading");
+
+    try {
+      const formData = new FormData(form);
+
+      formData.append(
+        "_subject",
+        "پیام جدید از وب‌سایت آرمین پناهی"
+      );
+
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          Accept: "application/json"
+        },
+        body: formData
+      });
+
+      let result = {};
+
+      try {
+        result = await response.json();
+      } catch (error) {
+        result = {};
+      }
+
+      if (!response.ok) {
+        const apiMessage =
+          Array.isArray(result.errors) && result.errors.length
+            ? result.errors
+                .map((item) => item.message)
+                .filter(Boolean)
+                .join(" ")
+            : "ارسال پیام انجام نشد. لطفاً دوباره تلاش کنید.";
+
+        throw new Error(apiMessage);
+      }
+
+      form.reset();
+      formBtn.disabled = true;
+
+      setFormStatus(
+        "پیام شما با موفقیت ارسال شد. ممنون از ارتباط شما 🌟",
+        "success"
+      );
+
+    } catch (error) {
+      console.error("Formspree submission error:", error);
+
+      setFormStatus(
+        error instanceof Error && error.message
+          ? error.message
+          : "در ارسال پیام مشکلی پیش آمد. لطفاً دوباره تلاش کنید.",
+        "error"
+      );
+
+      if (form.checkValidity()) {
+        formBtn.removeAttribute("disabled");
+      }
+
+    } finally {
+      formBtn.removeAttribute("aria-busy");
+
+      if (buttonText) {
+        buttonText.textContent = originalButtonText;
+      }
+    }
+  });
+}
+
+// Enable submit button when form becomes valid
+for (let i = 0; i < formInputs.length; i++) {
+  formInputs[i].addEventListener("input", function () {
+
+    if (form.checkValidity()) {
+      formBtn.removeAttribute("disabled");
+    } else {
+      formBtn.setAttribute("disabled", "");
+    }
+
+  });
+}
 // add event to all form input field
 for (let i = 0; i < formInputs.length; i++) {
   formInputs[i].addEventListener("input", function () {
