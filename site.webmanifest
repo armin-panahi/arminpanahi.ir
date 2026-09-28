@@ -1,7 +1,7 @@
 {
   "name": "Armin Panahi",
   "short_name": "Armin Panahi",
-  "description": "وب سایت رسمی آرمین پناهی",
+  "description":"وب‌سایت شخصی آرمین پناهی، توسعه‌دهنده فرانت‌اند و مهندس نرم‌افزار. مشاهده نمونه‌کارها، پروژه‌ها، مهارت‌ها و راه‌های ارتباطی.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
